@@ -204,6 +204,21 @@ const prog_uint8_t bargraphUpperArray[] PROGMEM = {
   0b11000000, // 10
 };
 
+const prog_uint8_t indicatorArray[] PROGMEM = {
+//  Bargraph  Segments
+  0b00000000, // 0
+  0b10000000, // 1
+  0b01000000, // 2
+  0b00100000, // 3
+  0b00010000, // 4
+  0b00000000, // 5
+  0b00000000, // 6
+  0b00000000, // 7
+  0b00000000, // 8
+  0b00000000, // 9
+  0b00000000, // 10
+};
+
 class SevSeg {
 
 public:
@@ -213,8 +228,8 @@ public:
   void DisplayString(char*, byte);
 //  void NewNumber(int number_in, byte DecPlace_in); 
   void Begin(boolean mode_in, byte numOfDigits, byte digit1, byte digit2, byte digit3, byte digit4, byte segment1, byte segment2, byte segment3, byte segment4, byte segment5, byte segment6, byte segment7, byte segmentDP);
-  void Begin(boolean mode_in, byte numOfDigits, byte digit1, byte digit2, byte digit3, byte digit4, byte bargraph5, byte segment1, byte segment2, byte segment3, byte segment4, byte segment5, byte segment6, byte segment7, byte segmentDP, byte segment9, byte segment10);
-  void Begin(boolean mode_in, byte numOfDigits, byte digit1, byte digit2, byte digit3, byte digit4, byte bargraph5, byte digitColon, byte digitApostrophe, byte segment1, byte segment2, byte segment3, byte segment4, byte segment5, byte segment6, byte segment7, byte segmentDP, byte segmentColon, byte segmentApostrophe, byte segment9, byte segment10);
+  void Begin(boolean mode_in, byte numOfDigits, byte digit1, byte digit2, byte digit3, byte digit4, byte bargraph5, byte led6, byte segment1, byte segment2, byte segment3, byte segment4, byte segment5, byte segment6, byte segment7, byte segmentDP, byte segment9, byte segment10);
+  void Begin(boolean mode_in, byte numOfDigits, byte digit1, byte digit2, byte digit3, byte digit4, byte bargraph5, byte led6, byte digitColon, byte digitApostrophe, byte segment1, byte segment2, byte segment3, byte segment4, byte segment5, byte segment6, byte segment7, byte segmentDP, byte segmentColon, byte segmentApostrophe, byte segment9, byte segment10);
   void SetBrightness(byte percentBright);
 
   //Public Variables
@@ -227,7 +242,7 @@ private:
   //Private Variables
   boolean mode, DigitOn, DigitOff, SegOn, SegOff;
 
-  byte digit1, digit2, digit3, digit4, bargraph5;
+  byte digit1, digit2, digit3, digit4, bargraph5, indicator6;
   byte digitApostrophe, digitColon, segmentApostrophe, segmentColon;
   byte segmentA, segmentB, segmentC, segmentD, segmentE, segmentF, segmentG, segmentDP, segmentH, segmentI;
   
@@ -235,7 +250,7 @@ private:
   
   unsigned int brightnessDelay;
 
-  byte DigitPins[5];
+  byte DigitPins[6];
   byte SegmentPins[8];
   byte BargraphPins[2];
   boolean lights[4][8];

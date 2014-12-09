@@ -68,7 +68,7 @@ SevSeg::SevSeg()
 
 }
 void SevSeg::Begin(boolean mode_in, byte numOfDigits, 
-	byte dig1, byte dig2, byte dig3, byte dig4, byte bar5,
+	byte dig1, byte dig2, byte dig3, byte dig4, byte bar5, byte led6,
 	byte digitCol, byte digitApos,
 	byte segA, byte segB, byte segC, byte segD, byte segE, byte segF, byte segG, 
 	byte segDP, 
@@ -86,6 +86,7 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
   digitApostrophe = digitApos;
   digitColon = digitCol;
   bargraph5 = bar5;
+  indicator6 = led6;
   segmentA = segA;
   segmentB = segB;
   segmentC = segC;
@@ -135,7 +136,8 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
   DigitPins[1] = digit2;
   DigitPins[2] = digit3;
   DigitPins[3] = digit4;
-  DigitPins[5] = bargraph5;
+  DigitPins[4] = bargraph5;
+  DigitPins[5] = indicator6;
   SegmentPins[0] = segmentA;
   SegmentPins[1] = segmentB;
   SegmentPins[2] = segmentC;
@@ -187,7 +189,7 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
 	byte segA, byte segB, byte segC, byte segD, byte segE, byte segF, byte segG, 
 	byte segDP)
 {
-  Begin(mode_in, numOfDigits, dig1, dig2, dig3, dig4, 255, 255, 255, segA, segB, segC,
+  Begin(mode_in, numOfDigits, dig1, dig2, dig3, dig4, 255, 255, 255, 255, segA, segB, segC,
 		segD, segE, segF, segG, segDP, 255, 255, 0, 0);
 }
 
@@ -196,14 +198,14 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
 //Set pin modes and turns all displays off
 //This second begin is used when the display does not support a colon and apostrophe
 //The digitApostrophe, segmentApostrophe, and dig/segColon are set to 255 and the normal .Begin is called
-//Addition of segment H, & I for 10 LED bargraph
+//Addition of segment H, & I for 10 LED bargraph and led6 for indicator LED
 void SevSeg::Begin(boolean mode_in, byte numOfDigits, 
-	byte dig1, byte dig2, byte dig3, byte dig4, byte bar5, 
+	byte dig1, byte dig2, byte dig3, byte dig4, byte bar5, byte led6,
 	byte segA, byte segB, byte segC, byte segD, byte segE, byte segF, byte segG, 
 	byte segDP,
 	byte segH, byte segI)
 {
-  Begin(mode_in, numOfDigits, dig1, dig2, dig3, dig4, bar5, 255, 255, segA, segB, segC,
+  Begin(mode_in, numOfDigits, dig1, dig2, dig3, dig4, bar5, led6, 255, 255, segA, segB, segC,
 		segD, segE, segF, segG, segDP, 255, 255, segH, segI);
 }
 
@@ -248,6 +250,9 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 			case 5:
 				digitalWrite(bargraph5, DigitOn);
 				break;
+			case 6:
+				digitalWrite(indicator6, DigitOn);
+				break;
 		}
 
 		//Here we access the array of segments
@@ -264,22 +269,31 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 			if (characterToDisplay & 0x10) digitalWrite(segmentE, SegOn);
 			if (characterToDisplay & 0x20) digitalWrite(segmentF, SegOn);
 			if (characterToDisplay & 0x40) digitalWrite(segmentG, SegOn);
-			if (characterToDisplay & 0x40) digitalWrite(segmentG, SegOn);
 		}
 		else
 		{
 			if (digit == 5 && bargraph5 != 255) { // Handling the 5th Digit as bargraph
-				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<6)) digitalWrite(segmentA, SegOn);
-				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<5)) digitalWrite(segmentB, SegOn);
-				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<4)) digitalWrite(segmentC, SegOn);
-				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<3)) digitalWrite(segmentD, SegOn);
-				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<2)) digitalWrite(segmentE, SegOn);
-				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<1)) digitalWrite(segmentF, SegOn);
-				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<0)) digitalWrite(segmentG, SegOn);
+				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<7)) digitalWrite(segmentA, SegOn);
+				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<6)) digitalWrite(segmentB, SegOn);
+				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<5)) digitalWrite(segmentC, SegOn);
+				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<4)) digitalWrite(segmentD, SegOn);
+				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<3)) digitalWrite(segmentE, SegOn);
+				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<2)) digitalWrite(segmentF, SegOn);
+				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<1)) digitalWrite(segmentG, SegOn);
 				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<0)) digitalWrite(segmentDP, SegOn);
-				if (pgm_read_byte(&bargraphUpperArray[characterToDisplay]) & (1<<6)) digitalWrite(segmentH, SegOn);
-				if (pgm_read_byte(&bargraphUpperArray[characterToDisplay]) & (1<<5)) digitalWrite(segmentI, SegOn);
-			} else {
+				if (pgm_read_byte(&bargraphUpperArray[characterToDisplay]) & (1<<7)) digitalWrite(segmentH, SegOn);
+				if (pgm_read_byte(&bargraphUpperArray[characterToDisplay]) & (1<<6)) digitalWrite(segmentI, SegOn);
+			}else if (digit == 6) {
+				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<7)) digitalWrite(segmentA, SegOn);
+				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<6)) digitalWrite(segmentB, SegOn);
+				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<5)) digitalWrite(segmentC, SegOn);
+				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<4)) digitalWrite(segmentD, SegOn);
+				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<3)) digitalWrite(segmentE, SegOn);
+				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<2)) digitalWrite(segmentF, SegOn);
+				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<1)) digitalWrite(segmentG, SegOn);
+				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<0)) digitalWrite(segmentG, SegOn);
+
+			}else {
 				if (pgm_read_byte(&characterArray[characterToDisplay]) & (1<<6)) digitalWrite(segmentA, SegOn);
 				if (pgm_read_byte(&characterArray[characterToDisplay]) & (1<<5)) digitalWrite(segmentB, SegOn);
 				if (pgm_read_byte(&characterArray[characterToDisplay]) & (1<<4)) digitalWrite(segmentC, SegOn);
@@ -326,6 +340,9 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 			  break;
 			//This only currently works for 4 digits
 			case 5:
+			  digitalWrite(bargraph5, DigitOff);
+			  break;
+			case 6:
 			  digitalWrite(bargraph5, DigitOff);
 			  break;
 		}
