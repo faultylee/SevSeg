@@ -1,3 +1,10 @@
+Fork
+----
+I'm forking this from https://github.com/sparkfun/SevSeg to add an additional bargraph to be displayed as the 5th Digit. This is to be used by a group of ITB students in their project. Feel free to use the code if you find it useful
+
+Original
+--------
+
 This library allows an Arduino to easily display numbers and characters on a 4 digit 7-segment display without a separate 7-segment display controller.
 It works for any digital pin arrangement, common anode and common cathode displays. It also has character support including letters A-F and many symbols. 
 
