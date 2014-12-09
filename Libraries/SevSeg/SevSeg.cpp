@@ -146,8 +146,8 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
   SegmentPins[5] = segmentF;
   SegmentPins[6] = segmentG;
   SegmentPins[7] = segmentDP;
-  BargraphPins[0] = segmentH;
-  BargraphPins[1] = segmentI;
+  SegmentPins[8] = segmentH;
+  SegmentPins[9] = segmentI;
 
   //Turn everything Off before setting pin as output
   //Set all digit pins off. Low for common anode, high for common cathode
@@ -157,8 +157,9 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
     pinMode(DigitPins[digit], OUTPUT);
   }
   //Set all segment pins off. High for common anode, low for common cathode
-  for (byte seg = 0 ; seg < 8 ; seg++) 
+  for (byte seg = 0 ; seg < 10 ; seg++) 
   {
+    if (seg > 7 && bargraph5 != 255)
     digitalWrite(SegmentPins[seg], SegOff);
     pinMode(SegmentPins[seg], OUTPUT);
   }
@@ -291,7 +292,7 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<3)) digitalWrite(segmentE, SegOn);
 				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<2)) digitalWrite(segmentF, SegOn);
 				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<1)) digitalWrite(segmentG, SegOn);
-				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<0)) digitalWrite(segmentG, SegOn);
+				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<0)) digitalWrite(segmentDP, SegOn);
 
 			}else {
 				if (pgm_read_byte(&characterArray[characterToDisplay]) & (1<<6)) digitalWrite(segmentA, SegOn);
@@ -320,8 +321,10 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 		digitalWrite(segmentF, SegOff);
 		digitalWrite(segmentG, SegOff);
 		digitalWrite(segmentDP, SegOff);
-		digitalWrite(segmentH, SegOff);
-		digitalWrite(segmentI, SegOff);
+		if (bargraph5 != 255) {
+			digitalWrite(segmentH, SegOff);
+			digitalWrite(segmentI, SegOff);
+		}
 
 		//Turn off this digit
 		switch(digit) 

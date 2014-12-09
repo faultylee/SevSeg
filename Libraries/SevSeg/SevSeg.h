@@ -177,11 +177,11 @@ const prog_uint8_t characterArray[] PROGMEM = {
 const prog_uint8_t bargraphLowerArray[] PROGMEM = {
 //  Bargraph  Segments
   0b00000000, // 0
-  0b10000000, // 1
-  0b11000000, // 2
-  0b11100000, // 3
-  0b11110000, // 4
-  0b11111000, // 5
+  0b00010000, // 1
+  0b00011000, // 2
+  0b00011100, // 3
+  0b10011100, // 4
+  0b11011100, // 5
   0b11111100, // 6
   0b11111110, // 7
   0b11111111, // 8
@@ -200,7 +200,7 @@ const prog_uint8_t bargraphUpperArray[] PROGMEM = {
   0b00000000, // 6
   0b00000000, // 7
   0b00000000, // 8
-  0b10000000, // 9
+  0b01000000, // 9
   0b11000000, // 10
 };
 
@@ -251,7 +251,7 @@ private:
   unsigned int brightnessDelay;
 
   byte DigitPins[6];
-  byte SegmentPins[8];
+  byte SegmentPins[10];
   byte BargraphPins[2];
   boolean lights[4][8];
   byte nums[4];
