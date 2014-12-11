@@ -175,7 +175,9 @@ const prog_uint8_t characterArray[] PROGMEM = {
 };
 
 const prog_uint8_t bargraphLowerArray[] PROGMEM = {
-//  Bargraph  Segments
+//  Bargraph  Segments for lower 8 LED
+//	The order is a little messed up due to the 7 segment being soldered upside down and the bargraph 
+//	followed the upside down ordering before we corrected it using the segment ordering
   0b00000000, // 0
   0b00010000, // 1
   0b00011000, // 2
@@ -190,7 +192,7 @@ const prog_uint8_t bargraphLowerArray[] PROGMEM = {
 };
 
 const prog_uint8_t bargraphUpperArray[] PROGMEM = {
-//  Bargraph  Segments
+//  Bargraph  Segments for the upper 2 LED
   0b00000000, // 0
   0b00000000, // 1
   0b00000000, // 2
@@ -205,7 +207,7 @@ const prog_uint8_t bargraphUpperArray[] PROGMEM = {
 };
 
 const prog_uint8_t indicatorArray[] PROGMEM = {
-//  Bargraph  Segments
+//  Indicator  Segments
   0b00000000, // 0
   0b10000000, // 1
   0b01000000, // 2
@@ -226,6 +228,8 @@ public:
 
   //Public Functions
   void DisplayString(char*, byte);
+  void SetDisplayString(char*, byte);
+  void DisplayDigit(byte digit);
 //  void NewNumber(int number_in, byte DecPlace_in); 
   void Begin(boolean mode_in, byte numOfDigits, byte digit1, byte digit2, byte digit3, byte digit4, byte segment1, byte segment2, byte segment3, byte segment4, byte segment5, byte segment6, byte segment7, byte segmentDP);
   void Begin(boolean mode_in, byte numOfDigits, byte digit1, byte digit2, byte digit3, byte digit4, byte bargraph5, byte led6, byte segment1, byte segment2, byte segment3, byte segment4, byte segment5, byte segment6, byte segment7, byte segmentDP, byte segment9, byte segment10);
@@ -257,6 +261,10 @@ private:
   byte nums[4];
 
   byte DecAposColon;
+
+  char displayCharacters[6];
+  byte displayDecAposColon;
+  char segmentMemory[6];
 };
 
 #endif

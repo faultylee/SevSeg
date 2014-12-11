@@ -136,6 +136,7 @@ void SevSeg::Begin(boolean mode_in, byte numOfDigits,
   DigitPins[1] = digit2;
   DigitPins[2] = digit3;
   DigitPins[3] = digit4;
+  //Additional Digit pin for bargraph and indicator
   DigitPins[4] = bargraph5;
   DigitPins[5] = indicator6;
   SegmentPins[0] = segmentA;
@@ -228,10 +229,28 @@ void SevSeg::SetBrightness(byte percentBright)
 //Each digit is displayed for ~2000us, and cycles through the 4 digits
 //After running through the 4 numbers, the display is turned off
 //Will turn the display on for a given amount of time - this helps control brightness
-void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
+void SevSeg::DisplayString(char* toDisplay, byte DecAposColon) 
+{
+	this->SetDisplayString(toDisplay, DecAposColon);
+	for(byte digit = 1 ; digit < (numberOfDigits+1) ; digit++) 
+	{
+		this->DisplayDigit(digit);
+	}
+}
+
+void SevSeg::SetDisplayString(char* toDisplay, byte DecAposColon)
+{
+	for(byte digit = 1 ; digit < (numberOfDigits+1) ; digit++) 
+	{
+		displayCharacters[digit-1] = toDisplay[digit-1];
+	}
+	displayDecAposColon = DecAposColon;
+}
+
+void SevSeg::DisplayDigit(byte digit)
 {
 	//For the purpose of this code, digit = 1 is the left most digit, digit = 4 is the right most digit
-	for(byte digit = 1 ; digit < (numberOfDigits+1) ; digit++) 
+	//for(byte digit = 1 ; digit < (numberOfDigits+1) ; digit++) 
 	{
 		switch(digit) 
 		{
@@ -260,7 +279,7 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 		//This could be cleaned up a bit but it works
 		//displayCharacter(toDisplay[digit-1]); //Now display this digit
 		// displayArray (defined in SevSeg.h) decides which segments are turned on for each number or symbol
-		char characterToDisplay = toDisplay[digit-1];
+		char characterToDisplay = displayCharacters[digit-1];
 		if (characterToDisplay & 0x80)	// bit 7 enables bit-per-segment control
 		{	// Each bit of characterToDisplay turns on a single segment (from A-to-G)
 			if (characterToDisplay & 0x01) digitalWrite(segmentA, SegOn);
@@ -284,7 +303,7 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 				if (pgm_read_byte(&bargraphLowerArray[characterToDisplay]) & (1<<0)) digitalWrite(segmentDP, SegOn);
 				if (pgm_read_byte(&bargraphUpperArray[characterToDisplay]) & (1<<7)) digitalWrite(segmentH, SegOn);
 				if (pgm_read_byte(&bargraphUpperArray[characterToDisplay]) & (1<<6)) digitalWrite(segmentI, SegOn);
-			}else if (digit == 6) {
+			}else if (digit == 6) { //Handling the 6th Digit as indicator
 				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<7)) digitalWrite(segmentA, SegOn);
 				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<6)) digitalWrite(segmentB, SegOn);
 				if (pgm_read_byte(&indicatorArray[characterToDisplay]) & (1<<5)) digitalWrite(segmentC, SegOn);
@@ -305,7 +324,7 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 			}
 		}
 		//Service the decimal point, apostrophe and colon
-		if ((DecAposColon & (1<<(digit-1))) && (digit < 5)) //Test DecAposColon to see if we need to turn on a decimal point
+		if ((displayDecAposColon & (1<<(digit-1))) && (digit < 5)) //Test displayDecAposColon to see if we need to turn on a decimal point
 			digitalWrite(segmentDP, SegOn);
 		
 		delayMicroseconds(brightnessDelay + 1); //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
@@ -358,12 +377,12 @@ void SevSeg::DisplayString(char* toDisplay, byte DecAposColon)
 	//Turn on the colon and/or apostrophe
 	if ((digitColon != 255) || (digitApostrophe != 255))
 	{
-		if (DecAposColon & (1<<4)) //Test to see if we need to turn on the Colon
+		if (displayDecAposColon & (1<<4)) //Test to see if we need to turn on the Colon
 		{
 			digitalWrite(digitColon, DigitOn);
 			digitalWrite(segmentColon, SegOn);
 		}
-		if (DecAposColon & (1<<5)) //Test DecAposColon to see if we need to turn on Apostrophe
+		if (displayDecAposColon & (1<<5)) //Test displayDecAposColon to see if we need to turn on Apostrophe
 		{
 			digitalWrite(digitApostrophe, DigitOn);
 			digitalWrite(segmentApostrophe, SegOn);
