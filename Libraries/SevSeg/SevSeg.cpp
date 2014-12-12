@@ -365,7 +365,7 @@ void SevSeg::DisplayDigit(byte digit)
 			  digitalWrite(bargraph5, DigitOff);
 			  break;
 			case 6:
-			  digitalWrite(bargraph5, DigitOff);
+			  digitalWrite(indicator6, DigitOff);
 			  break;
 		}
 		// The display is on for microSeconds(brightnessLevel + 1), now turn off for the remainder of the framePeriod
